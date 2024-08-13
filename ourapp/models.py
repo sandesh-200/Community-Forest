@@ -1,6 +1,8 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils.text import slugify
+import os
 #Following are models
 #By sandesh
 class AllUser(models.Model):
@@ -117,6 +119,27 @@ class Report(models.Model):
 
     def __str__(self):
         return self.title
+    
+def get_upload_to(instance, filename):
+    event_name = slugify(instance.gallery.event_name) or f'gallery_{instance.gallery.id}'
+    return os.path.join('photos', event_name, filename)
+    
+
+class Gallery(models.Model):
+    event_name = models.CharField(max_length=255)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.event_name
+
+class Photo(models.Model):
+    gallery = models.ForeignKey(Gallery, related_name='photos', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=get_upload_to)
+    caption = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return self.caption if self.caption else f"Photo {self.id}"
+
     
 
     

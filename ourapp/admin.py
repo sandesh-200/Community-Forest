@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AllUser,Karyasamiti,ChetriyaSamiti,ToleSamiti,SallakarSamiti,LekhaSamiti,Notice,Report,News
+from .models import AllUser,Karyasamiti,ChetriyaSamiti,ToleSamiti,SallakarSamiti,LekhaSamiti,Notice,Report,News,Gallery,Photo
 
 class AllUserAdmin(admin.ModelAdmin):
     list_display = ('first_name', 'middle_name', 'last_name', 'municipality', 'ward', 'tole','member_number','phone','member_type','approved_by','approved_by_position','date_approved')
@@ -20,4 +20,12 @@ admin.site.register(Karyasamiti, KaryaSamitiAdmin)
 
 admin.site.register([ChetriyaSamiti,ToleSamiti,SallakarSamiti,LekhaSamiti,Notice,Report,News])
 
+class PhotoInline(admin.TabularInline):  # or admin.StackedInline
+    model = Photo
+    extra = 1
+    fields = ['image', 'caption']
 
+class GalleryAdmin(admin.ModelAdmin):
+    inlines = [PhotoInline]
+
+admin.site.register(Gallery, GalleryAdmin)
